@@ -215,6 +215,7 @@ lazy_static! {
         String::from("FontCharacter"),
         String::from("UniqueNetIdRepl"),
         String::from("NiagaraVariable"),
+        String::from("NiagaraVariableWithOffset"),
         String::from("FontData"),
         String::from("ClothLODData"),
         String::from("FloatRange"),
