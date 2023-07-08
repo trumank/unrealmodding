@@ -164,7 +164,7 @@ impl FName {
 
     /// Compare `FNames` based on their content
     pub fn eq_content(&self, other: &Self) -> bool {
-        self.get_content(|this| other == this)
+        self.get_content(|a| other.get_content(|b| a.eq(b)))
     }
 }
 
