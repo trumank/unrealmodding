@@ -355,6 +355,7 @@ pub enum Error {
     #[error("Unknown compression method {0}")]
     UnknownCompressionMethod(Box<str>),
     /// An LZ4 decompression error occured
+    #[cfg(feature = "lz4")]
     #[error(transparent)]
     Lz4(#[from] lz4_flex::block::DecompressError),
     /// Oodle decompression failed

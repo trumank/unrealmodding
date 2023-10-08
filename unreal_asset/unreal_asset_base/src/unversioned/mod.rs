@@ -285,20 +285,36 @@ impl Usmap {
                 compressed_data
             }
             EUsmapCompressionMethod::Brotli => {
-                let mut decompressed_data = Cursor::new(vec![0u8; decompressed_size as usize]);
-                brotli::BrotliDecompress(
-                    &mut Cursor::new(compressed_data),
-                    &mut decompressed_data,
-                )?;
-                decompressed_data.into_inner()
+                #[cfg(not(feature = "brotli"))]
+                return Err(
+                    UsmapError::unsupported_compression(self.compression_method as u8).into(),
+                );
+
+                #[cfg(feature = "brotli")]
+                {
+                    let mut decompressed_data = Cursor::new(vec![0u8; decompressed_size as usize]);
+                    brotli::BrotliDecompress(
+                        &mut Cursor::new(compressed_data),
+                        &mut decompressed_data,
+                    )?;
+                    decompressed_data.into_inner()
+                }
             }
             EUsmapCompressionMethod::ZStandard => {
-                let mut decompressed_data = Cursor::new(vec![0u8; decompressed_size as usize]);
-                zstd::stream::copy_decode(
-                    &mut Cursor::new(compressed_data),
-                    &mut decompressed_data,
-                )?;
-                decompressed_data.into_inner()
+                #[cfg(not(feature = "zstd"))]
+                return Err(
+                    UsmapError::unsupported_compression(self.compression_method as u8).into(),
+                );
+
+                #[cfg(feature = "zstd")]
+                {
+                    let mut decompressed_data = Cursor::new(vec![0u8; decompressed_size as usize]);
+                    zstd::stream::copy_decode(
+                        &mut Cursor::new(compressed_data),
+                        &mut decompressed_data,
+                    )?;
+                    decompressed_data.into_inner()
+                }
             }
             EUsmapCompressionMethod::Oodle => {
                 #[cfg(not(feature = "oodle"))]
