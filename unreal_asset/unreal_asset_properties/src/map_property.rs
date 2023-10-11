@@ -51,7 +51,8 @@ impl MapProperty {
         is_key: bool,
     ) -> Result<Property, Error> {
         let new_ancestry = ancestry.with_parent(name.clone());
-        type_name.get_content(|ty| match ty {
+        let ty = type_name.get_owned_content();
+        match ty.as_str() {
             "StructProperty" => {
                 let mut struct_type = None;
 
@@ -113,7 +114,7 @@ impl MapProperty {
                 0,
                 false,
             ),
-        })
+        }
     }
 
     /// Read a `MapProperty` from an asset
