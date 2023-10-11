@@ -16,6 +16,8 @@ pub struct MovieSceneFloatValue {
     pub interp_mode: RichCurveInterpMode,
     /// Tangent mode
     pub tangent_mode: RichCurveTangentMode,
+    /// aaaaaaaaaaaa
+    pub padding: [u8; 2],
 }
 
 impl MovieSceneFloatValue {
@@ -28,12 +30,15 @@ impl MovieSceneFloatValue {
         let tangent = MovieSceneTangentData::new(asset, clang_win64)?;
         let interp_mode: RichCurveInterpMode = RichCurveInterpMode::try_from(asset.read_i8()?)?;
         let tangent_mode: RichCurveTangentMode = RichCurveTangentMode::try_from(asset.read_i8()?)?;
+        let mut padding = [0; 2];
+        asset.read_exact(&mut padding)?;
 
         Ok(MovieSceneFloatValue {
             value: OrderedFloat(value),
             tangent,
             interp_mode,
             tangent_mode,
+            padding,
         })
     }
 
@@ -43,6 +48,7 @@ impl MovieSceneFloatValue {
         self.tangent.write(asset)?;
         asset.write_i8(self.interp_mode as i8)?;
         asset.write_i8(self.tangent_mode as i8)?;
+        asset.write_all(&self.padding)?;
         Ok(())
     }
 }

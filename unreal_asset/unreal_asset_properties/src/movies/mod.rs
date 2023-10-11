@@ -35,7 +35,7 @@ pub struct MovieSceneTangentData {
     /// Tangent weight mode
     pub tangent_weight_mode: RichCurveTangentWeightMode,
     /// Padding
-    pub padding: Vec<u8>,
+    pub padding: [u8; 3],
     /// Is compiled with clang win64
     clang_win64: bool,
 }
@@ -52,13 +52,8 @@ impl MovieSceneTangentData {
         let leave_tangent_weight = asset.read_f32::<LE>()?;
         let tangent_weight_mode: RichCurveTangentWeightMode =
             RichCurveTangentWeightMode::try_from(asset.read_i8()?)?;
-        let mut padding = match clang_win64 {
-            true => vec![0u8; 3],
-            false => vec![0u8; 0],
-        };
-        if clang_win64 {
-            asset.read_exact(&mut padding)?;
-        }
+        let mut padding = [0u8; 3];
+        asset.read_exact(&mut padding)?;
 
         Ok(MovieSceneTangentData {
             arrive_tangent: OrderedFloat(arrive_tangent),
@@ -78,10 +73,7 @@ impl MovieSceneTangentData {
         asset.write_f32::<LE>(self.arrive_tangent_weight.0)?;
         asset.write_f32::<LE>(self.leave_tangent_weight.0)?;
         asset.write_i8(self.tangent_weight_mode as i8)?;
-
-        if self.clang_win64 {
-            asset.write_all(&self.padding)?;
-        }
+        asset.write_all(&self.padding)?;
         Ok(())
     }
 }
