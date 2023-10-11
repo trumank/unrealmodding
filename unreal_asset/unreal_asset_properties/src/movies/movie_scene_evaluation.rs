@@ -130,7 +130,7 @@ where
         let items_amount = asset.read_i32::<LE>()?;
         let mut items = Vec::with_capacity(items_amount as usize);
 
-        for _ in 0..entries_amount {
+        for _ in 0..items_amount {
             items.push(item_reader(asset)?);
         }
 
