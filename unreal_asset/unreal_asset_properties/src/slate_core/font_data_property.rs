@@ -116,6 +116,11 @@ impl FontData {
                     PropertyError::property_field_none("loading_policy", "Some(ELoadingPolicy)")
                 })? as u8)?;
             }
+
+            asset
+                .write_i32::<LE>(self.sub_face_index.ok_or_else(|| {
+                    PropertyError::property_field_none("sub_face_index", "i32")
+                })?)?;
         }
         Ok(())
     }
