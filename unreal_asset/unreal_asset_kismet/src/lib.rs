@@ -2594,7 +2594,7 @@ impl KismetExpressionTrait for ExSetMap {
     fn write<Writer: ArchiveWriter>(&self, asset: &mut Writer) -> Result<usize, Error> {
         let mut offset = size_of::<i32>();
         offset += KismetExpression::write(self.map_property.as_ref(), asset)?;
-        asset.write_i32::<LE>(self.elements.len() as i32)?;
+        asset.write_i32::<LE>(self.elements.len() as i32 / 2)?;
         for element in &self.elements {
             offset += KismetExpression::write(element, asset)?;
         }
