@@ -156,8 +156,8 @@ impl MapProperty {
         let type_1 = type_1.ok_or_else(|| Error::invalid_file("No type1".to_string()))?;
         let type_2 = type_2.ok_or_else(|| Error::invalid_file("No type2".to_string()))?;
 
+        let mut vec = Vec::with_capacity(num_keys_to_remove as usize);
         for _ in 0..num_keys_to_remove as usize {
-            let mut vec = Vec::with_capacity(num_keys_to_remove as usize);
             vec.push(MapProperty::map_type_to_class(
                 asset,
                 type_1.clone(),
@@ -167,8 +167,8 @@ impl MapProperty {
                 false,
                 true,
             )?);
-            keys_to_remove = Some(vec);
         }
+        keys_to_remove = Some(vec);
 
         let num_entries = asset.read_i32::<LE>()?;
         let mut values: IndexedMap<Property, Property> = IndexedMap::new();
