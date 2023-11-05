@@ -151,7 +151,6 @@ impl MapProperty {
         }
 
         let num_keys_to_remove = asset.read_i32::<LE>()?;
-        let mut keys_to_remove = None;
 
         let type_1 = type_1.ok_or_else(|| Error::invalid_file("No type1".to_string()))?;
         let type_2 = type_2.ok_or_else(|| Error::invalid_file("No type2".to_string()))?;
@@ -168,7 +167,7 @@ impl MapProperty {
                 true,
             )?);
         }
-        keys_to_remove = Some(vec);
+        let keys_to_remove = Some(vec);
 
         let num_entries = asset.read_i32::<LE>()?;
         let mut values: IndexedMap<Property, Property> = IndexedMap::new();
