@@ -51,9 +51,9 @@ impl MsStoreInstallManager {
             return Err(ModLoaderWarning::winstore_error());
         };
 
-        let Some(package_path) = game_path_helpers::determine_game_package_path_winstore(
-            &store_info
-        ) else {
+        let Some(package_path) =
+            game_path_helpers::determine_game_package_path_winstore(&store_info)
+        else {
             return Err(ModLoaderWarning::winstore_error());
         };
 

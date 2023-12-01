@@ -919,7 +919,10 @@ impl<'a, C: Read + Seek> Asset<C> {
         let mut current_name_map = self.name_map.clone();
         self.traverse_fnames(&mut |mut name| {
             let content = name.get_owned_content();
-            let FName::Backed { index, name_map, .. } = &mut name else {
+            let FName::Backed {
+                index, name_map, ..
+            } = &mut name
+            else {
                 return;
             };
 

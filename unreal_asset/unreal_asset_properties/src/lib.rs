@@ -1461,7 +1461,9 @@ pub fn generate_unversioned_header<W: ArchiveWriter>(
             property.get_ancestry(),
             property.get_duplication_index() as u32,
         ) else {
-            return property.get_name().get_content(|name| Err(PropertyError::no_mapping(name, property.get_ancestry()).into()));
+            return property.get_name().get_content(|name| {
+                Err(PropertyError::no_mapping(name, property.get_ancestry()).into())
+            });
         };
 
         if matches!(property, Property::EmptyProperty(_)) {

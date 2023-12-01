@@ -71,7 +71,6 @@ pub fn determine_installed_mods_path_proton(game_name: &str, app_id: u32) -> Opt
 pub fn determine_game_package_path_winstore(store_info: &MsStoreInfo) -> Option<PathBuf> {
     let base_dirs = BaseDirs::new();
     let Some(base_dirs) = base_dirs else {
-
         warn!("Could not determine base directory");
         return None;
     };

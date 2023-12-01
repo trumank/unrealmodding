@@ -35,7 +35,8 @@ impl UnknownProperty {
     ) -> Result<Self, Error> {
         let property_guid = optional_guid!(asset, include_header);
         let mut value = vec![];
-        Vec::try_reserve_exact(&mut value, length as usize).map_err(|_| Error::unimplemented("overflow".to_owned()))?;
+        Vec::try_reserve_exact(&mut value, length as usize)
+            .map_err(|_| Error::unimplemented("overflow".to_owned()))?;
         value.resize(length as usize, 0);
         asset.read_exact(&mut value)?;
 
