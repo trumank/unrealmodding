@@ -87,6 +87,6 @@ pub mod asset_archive_writer;
 pub mod asset_data;
 pub mod fengineversion;
 
-pub use asset::Asset;
+pub use asset::{Asset, AssetBuilder};
 
 const UE4_ASSET_MAGIC: u32 = u32::from_be_bytes([0xc1, 0x83, 0x2a, 0x9e]);

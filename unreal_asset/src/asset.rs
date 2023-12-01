@@ -67,6 +67,50 @@ struct AssetHeader {
     bulk_data_start_offset: i64,
 }
 
+/// Builder for creating a new Asset
+pub struct AssetBuilder<C: Read + Seek> {
+    asset_data: C,
+    bulk_data: Option<C>,
+    engine_version: EngineVersion,
+    mappings: Option<Usmap>,
+    skip_data: bool,
+}
+impl<C: Read + Seek> AssetBuilder<C> {
+    /// Create new AssetBuilder
+    pub fn new(asset_data: C, engine_version: EngineVersion) -> Self {
+        Self {
+            asset_data,
+            bulk_data: None,
+            engine_version,
+            mappings: None,
+            skip_data: false,
+        }
+    }
+
+    /// Attach bulk data to parse
+    pub fn bulk(mut self, bulk_data: C) -> Self {
+        self.bulk_data = Some(bulk_data);
+        self
+    }
+
+    /// Whether to skip parsing of bulk data
+    pub fn skip_data(mut self, skip_data: bool) -> Self {
+        self.skip_data = skip_data;
+        self
+    }
+
+    /// Build Asset using the given configuration
+    pub fn build(self) -> Result<Asset<C>, Error> {
+        Asset::new(
+            self.asset_data,
+            self.bulk_data,
+            self.engine_version,
+            self.mappings,
+            self.skip_data,
+        )
+    }
+}
+
 //#[derive(Debug)]
 /// Unreal Engine uasset
 #[derive(FNameContainer)]
@@ -187,6 +231,7 @@ impl<'a, C: Read + Seek> Asset<C> {
         bulk_data: Option<C>,
         engine_version: EngineVersion,
         mappings: Option<Usmap>,
+        skip_data: bool,
     ) -> Result<Self, Error> {
         let use_event_driven_loader = bulk_data.is_some();
 
@@ -250,7 +295,7 @@ impl<'a, C: Read + Seek> Asset<C> {
         };
         asset.set_engine_version(engine_version);
         asset.asset_data.mappings = mappings;
-        asset.parse_data()?;
+        asset.parse_data(skip_data)?;
         Ok(asset)
     }
 
@@ -574,7 +619,7 @@ impl<'a, C: Read + Seek> Asset<C> {
     }
 
     /// Parse asset data
-    fn parse_data(&mut self) -> Result<(), Error> {
+    fn parse_data(&mut self, skip_data: bool) -> Result<(), Error> {
         self.parse_header()?;
 
         self.seek(SeekFrom::Start(self.name_offset as u64))?;
@@ -663,6 +708,10 @@ impl<'a, C: Read + Seek> Asset<C> {
         if self.world_tile_info_offset > 0 {
             self.seek(SeekFrom::Start(self.world_tile_info_offset as u64))?;
             self.asset_data.world_tile_info = Some(FWorldTileInfo::new(self)?);
+        }
+
+        if skip_data {
+            return Ok(());
         }
 
         if self.asset_data.use_event_driven_loader {
